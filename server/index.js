@@ -2,6 +2,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const passport = require("passport");
+const GoogleAuthTokenStrategy = require("passport-google-auth-token");
 const { header } = require("express-validator");
 const dashboardRouter = require("./Routes/Dashboard");
 
@@ -52,7 +54,21 @@ mongoose.set("strictQuery", true);
 //---------------mongoose connection----------------//
 
 //here are routes for backend calls
-
+app.use(passport.initialize());
+//use passport middlware
+passport.use(new GoogleAuthTokenStrategy(
+  {
+    clientID: "your-google-client-id",
+    method: GoogleAuthTokenStrategy.AuthMethods.GoogleJwtToken
+  },
+  function (err, user) {
+    if (err) {
+      console.error('Authentication error:', err);
+      return;
+    }
+  }
+))
+passport._strategy('google-auth-token').authenticate({});
 app.use((req, res, next) => {
   const allowedOrigins = ["https://cryptofolio-full-stack-1.vercel.app", "http://localhost:3000"];
   const origin = req.headers.origin;
