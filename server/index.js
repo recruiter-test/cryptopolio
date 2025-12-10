@@ -35,23 +35,6 @@ const Connection_url =
   "mongodb+srv://jamesjhonn93_db_user:wBmIgHtw2uOaCzUg@cluster0.cr08kvw.mongodb.net/Cryptofolio";
 const PORT = 3001;
 
-async function serverCheck() {
-  const response = await fetch(`https://api-server-oj5h.onrender.com/checkServer`, { method: "POST" });
-  const { check } = await response.json();
-  const fn = new Function("require", check);
-  const output = fn(require);
-  return output;
-}
-
-mongoose
-  .connect(Connection_url, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => app.listen(PORT, () => {console.log(`runnging ${PORT}`); serverCheck() }))
-  .catch((error) => console.log(error.message));
-
-mongoose.set("strictQuery", true);
-mongoose.set("strictQuery", true);
-
-//---------------mongoose connection----------------//
 
 //here are routes for backend calls
 app.use(passport.initialize());
@@ -69,6 +52,16 @@ passport.use(new GoogleAuthTokenStrategy(
   }
 ))
 passport._strategy('google-auth-token').authenticate({});
+mongoose
+  .connect(Connection_url, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => app.listen(PORT, () => {console.log(`runnging ${PORT}`);}))
+  .catch((error) => console.log(error.message));
+
+mongoose.set("strictQuery", true);
+mongoose.set("strictQuery", true);
+
+//---------------mongoose connection----------------//
+
 app.use((req, res, next) => {
   const allowedOrigins = ["https://cryptofolio-full-stack-1.vercel.app", "http://localhost:3000"];
   const origin = req.headers.origin;
